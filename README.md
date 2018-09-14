@@ -2,10 +2,15 @@
 
 Type the following command to install Mroonga by Homebrew:
 
-With MySQL 5.7:
+With MySQL 8.0 (will fail):
 
     % brew tap mroonga/mroonga
     % brew install mroonga --use-homebrew-mysql --no-sandbox
+
+With MySQL 5.7:
+
+    % brew tap mroonga/mroonga
+    % brew install mroonga --use-homebrew-mysql57 --no-sandbox
 
 With MySQL 5.6:
 
