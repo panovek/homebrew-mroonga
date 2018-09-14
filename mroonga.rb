@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 class Mroonga < Formula
   homepage "http://mroonga.org/"
-  url "http://packages.groonga.org/source/mroonga/mroonga-8.02.tar.gz"
-  sha256 "334056911ae350056ce43e3b7df585fa21989cd4aae5a7ac9285999a9360ff46"
+  url "http://packages.groonga.org/source/mroonga/mroonga-8.06.tar.gz"
+  sha256 "35451cdef6d0cb49861f7eefc682f6695006af59476d7370632c51aa64b2ca78"
 
   depends_on "pkg-config" => :build
 
   option "use-homebrew-mysql", "Use MySQL installed by Homebrew."
+  option "use-homebrew-mysql57", "Use MySQL@5.7 installed by Homebrew."
   option "use-homebrew-mysql56", "Use MySQL@5.6 installed by Homebrew."
   option "use-homebrew-mysql55", "Use MySQL@5.5 installed by Homebrew."
-  option "use-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with use-homebrew-mysql, use-homebrew-mysql56, and use-homebrew-mysql55."
+  option "use-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56, and use-homebrew-mysql55."
   option "with-mecab", "Use MeCab installed by Homebrew. You can use additional tokenizer - TokenMecab. Note that you need to build Groonga with MeCab"
-  option "with-mysql-source=PATH", "MySQL source directory. You can't use this option with use-homebrew-mysql, use-homebrew-mysql56 and use-homebrew-mariadb"
+  option "with-mysql-source=PATH", "MySQL source directory. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56 and use-homebrew-mariadb"
   option "with-mysql-build=PATH", "MySQL build directory (default: guess from with-mysql-source)"
   option "with-mysql-config=PATH", "mysql_config path (default: guess from with-mysql-source)"
   option "with-debug[=full]", "Build with debug option"
@@ -27,6 +28,9 @@ class Mroonga < Formula
     depends_on "cmake" => :build
     depends_on "boost" => :build
     depends_on "mysql"
+  elsif build.include?("use-homebrew-mysql57")
+    depends_on "cmake" => :build
+    depends_on "mysql@5.7"
   elsif build.include?("use-homebrew-mysql56")
     depends_on "cmake" => :build
     depends_on "mysql@5.6"
@@ -46,6 +50,8 @@ class Mroonga < Formula
   def install
     if build.include?("use-homebrew-mysql")
       mysql_formula_name = "mysql"
+    elsif build.include?("use-homebrew-mysql57")
+      mysql_formula_name = "mysql@5.7"
     elsif build.include?("use-homebrew-mysql56")
       mysql_formula_name = "mysql@5.6"
     elsif build.include?("use-homebrew-mysql55")
@@ -66,7 +72,7 @@ class Mroonga < Formula
     else
       mysql_source_path = option_value("--with-mysql-source")
       if mysql_source_path.nil?
-        raise "--use-homebrew-mysql, --use-homebrew-mysql56, --use-homebrew-mysql55, --use-homebrew-mariadb or --with-mysql-source=PATH is required"
+        raise "--use-homebrew-mysql, --use-homebrew-mysql57, --use-homebrew-mysql56, --use-homebrew-mysql55, --use-homebrew-mariadb or --with-mysql-source=PATH is required"
       end
       install_mroonga(mysql_source_path, nil)
     end
