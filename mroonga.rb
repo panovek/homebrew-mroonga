@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 class Mroonga < Formula
   homepage "http://mroonga.org/"
-  url "http://packages.groonga.org/source/mroonga/mroonga-9.00.tar.gz"
-  sha256 "739825d98eecdfbaf493f36679ba85bb6ca0fbde813383f995dc4c6cdc8d79c5"
+  url "http://packages.groonga.org/source/mroonga/mroonga-10.05.tar.gz"
+  sha256 "605c9ca9bf5af882026030404ae230e933a567c1defb5b9a3619744c37beeaae"
 
   depends_on "pkg-config" => :build
 
@@ -12,9 +12,9 @@ class Mroonga < Formula
   option "use-homebrew-mysql55", "Use MySQL@5.5 installed by Homebrew."
   option "use-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56, and use-homebrew-mysql55."
   option "with-mecab", "Use MeCab installed by Homebrew. You can use additional tokenizer - TokenMecab. Note that you need to build Groonga with MeCab"
-  option "with-mysql-source=PATH", "MySQL source directory. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56 and use-homebrew-mariadb"
-  option "with-mysql-build=PATH", "MySQL build directory (default: guess from with-mysql-source)"
-  option "with-mysql-config=PATH", "mysql_config path (default: guess from with-mysql-source)"
+  option "with-mysql-source", "MySQL source directory. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56 and use-homebrew-mariadb"
+  option "with-mysql-build", "MySQL build directory (default: guess from with-mysql-source)"
+  option "with-mysql-config", "mysql_config path (default: guess from with-mysql-source)"
   option "with-debug[=full]", "Build with debug option"
   option "with-default-parser=PARSER", "Specify the default fulltext parser like with-default-parser=TokenMecab (default: TokenBigram)"
 
