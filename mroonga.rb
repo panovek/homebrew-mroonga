@@ -42,11 +42,6 @@ class Mroonga < Formula
     depends_on "mariadb"
   end
 
-  patch do
-    [
-    ]
-  end
-
   def install
     if build.with?("homebrew-mysql")
       mysql_formula_name = "mysql"
