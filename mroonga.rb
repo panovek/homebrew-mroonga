@@ -6,13 +6,13 @@ class Mroonga < Formula
 
   depends_on "pkg-config" => :build
 
-  option "use-homebrew-mysql", "Use MySQL installed by Homebrew."
-  option "use-homebrew-mysql57", "Use MySQL@5.7 installed by Homebrew."
-  option "use-homebrew-mysql56", "Use MySQL@5.6 installed by Homebrew."
-  option "use-homebrew-mysql55", "Use MySQL@5.5 installed by Homebrew."
-  option "use-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56, and use-homebrew-mysql55."
+  option "with-homebrew-mysql", "Use MySQL installed by Homebrew."
+  option "with-homebrew-mysql57", "Use MySQL@5.7 installed by Homebrew."
+  option "with-homebrew-mysql56", "Use MySQL@5.6 installed by Homebrew."
+  option "with-homebrew-mysql55", "Use MySQL@5.5 installed by Homebrew."
+  option "with-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56, and with-homebrew-mysql55."
   option "with-mecab", "Use MeCab installed by Homebrew. You can use additional tokenizer - TokenMecab. Note that you need to build Groonga with MeCab"
-  option "with-mysql-source", "MySQL source directory. You can't use this option with use-homebrew-mysql, use-homebrew-mysql57, use-homebrew-mysql56 and use-homebrew-mariadb"
+  option "with-mysql-source", "MySQL source directory. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56 and with-homebrew-mariadb"
   option "with-mysql-build", "MySQL build directory (default: guess from with-mysql-source)"
   option "with-mysql-config", "mysql_config path (default: guess from with-mysql-source)"
   option "with-debug[=full]", "Build with debug option"
@@ -24,39 +24,39 @@ class Mroonga < Formula
     depends_on "groonga"
   end
 
-  if build.include?("use-homebrew-mysql")
+  if build.with?("homebrew-mysql")
     depends_on "cmake" => :build
     depends_on "boost" => :build
     depends_on "mysql"
-  elsif build.include?("use-homebrew-mysql57")
+  elsif build.with?("homebrew-mysql57")
     depends_on "cmake" => :build
     depends_on "mysql@5.7"
-  elsif build.include?("use-homebrew-mysql56")
+  elsif build.with?("homebrew-mysql56")
     depends_on "cmake" => :build
     depends_on "mysql@5.6"
-  elsif build.include?("use-homebrew-mysql55")
+  elsif build.with?("homebrew-mysql55")
     depends_on "cmake" => :build
     depends_on "mysql@5.5"
-  elsif build.include?("use-homebrew-mariadb")
+  elsif build.with?("homebrew-mariadb")
     depends_on "cmake" => :build
     depends_on "mariadb"
   end
 
-  def patches
+  patch do
     [
     ]
   end
 
   def install
-    if build.include?("use-homebrew-mysql")
+    if build.with?("homebrew-mysql")
       mysql_formula_name = "mysql"
-    elsif build.include?("use-homebrew-mysql57")
+    elsif build.with?("homebrew-mysql57")
       mysql_formula_name = "mysql@5.7"
-    elsif build.include?("use-homebrew-mysql56")
+    elsif build.with?("homebrew-mysql56")
       mysql_formula_name = "mysql@5.6"
-    elsif build.include?("use-homebrew-mysql55")
+    elsif build.with?("homebrew-mysql55")
       mysql_formula_name = "mysql@5.5"
-    elsif build.include?("use-homebrew-mariadb")
+    elsif build.with?("homebrew-mariadb")
       mysql_formula_name = "mariadb"
     else
       mysql_formula_name = nil
@@ -72,7 +72,7 @@ class Mroonga < Formula
     else
       mysql_source_path = option_value("--with-mysql-source")
       if mysql_source_path.nil?
-        raise "--use-homebrew-mysql, --use-homebrew-mysql57, --use-homebrew-mysql56, --use-homebrew-mysql55, --use-homebrew-mariadb or --with-mysql-source=PATH is required"
+        raise "--with-homebrew-mysql, --with-homebrew-mysql57, --with-homebrew-mysql56, --with-homebrew-mysql55, --with-homebrew-mariadb or --with-mysql-source=PATH is required"
       end
       install_mroonga(mysql_source_path, nil)
     end
@@ -104,6 +104,7 @@ class Mroonga < Formula
   end
 
   private
+
   module Patchable
     def patches
       file_content = path.open do |file|
