@@ -65,7 +65,7 @@ class Mroonga < Formula
         end
       end
     else
-      mysql_source_path = option_value("--with-mysql-source")
+      mysql_source_path = ARGV.value("with-mysql-source")
       if mysql_source_path.nil?
         raise "--with-homebrew-mysql, --with-homebrew-mysql57, --with-homebrew-mysql56, --with-homebrew-mysql55, --with-homebrew-mariadb or --with-mysql-source=PATH is required"
       end
@@ -160,18 +160,18 @@ class Mroonga < Formula
       "--with-mysql-source=#{mysql_source_path}",
     ]
 
-    mysql_config = option_value("--with-mysql-config")
+    mysql_config = ARGV.value("with-mysql-config")
     mysql_config ||= mysql_config_path
     if mysql_config
       configure_args << "--with-mysql-config=#{mysql_config}"
     end
 
-    mysql_build_path = option_value("--with-mysql-build")
+    mysql_build_path = ARGV.value("with-mysql-build")
     if mysql_build_path
       configure_args << "--with-mysql-build=#{mysql_build_path}"
     end
 
-    debug = option_value("--with-debug")
+    debug = ARGV.value("with-debug")
     if debug
       if debug == true
         configure_args << "--with-debug"
@@ -180,7 +180,7 @@ class Mroonga < Formula
       end
     end
 
-    default_parser = option_value("--with-default-parser")
+    default_parser = ARGV.value("with-default-parser")
     if default_parser
       configure_args << "--with-default-parser=#{default_parser}"
     end
@@ -208,11 +208,4 @@ class Mroonga < Formula
     data_path + "uninstall.sql"
   end
 
-  def option_value(search_key)
-    build.used_options.each do |option|
-      key, value = option.to_s.split(/=/, 2)
-      return value || true if key == search_key
-    end
-    nil
-  end
 end
