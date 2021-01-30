@@ -12,9 +12,9 @@ class Mroonga < Formula
   option "with-homebrew-mysql55", "Use MySQL@5.5 installed by Homebrew."
   option "with-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56, and with-homebrew-mysql55."
   option "with-mecab", "Use MeCab installed by Homebrew. You can use additional tokenizer - TokenMecab. Note that you need to build Groonga with MeCab"
-  option "with-mysql-source", "MySQL source directory. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56 and with-homebrew-mariadb"
-  option "with-mysql-build", "MySQL build directory (default: guess from with-mysql-source)"
-  option "with-mysql-config", "mysql_config path (default: guess from with-mysql-source)"
+  option "with-mysql-source=", "MySQL source directory. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56 and with-homebrew-mariadb"
+  option "with-mysql-build=", "MySQL build directory (default: guess from with-mysql-source)"
+  option "with-mysql-config=", "mysql_config path (default: guess from with-mysql-source)"
   option "with-debug[=full]", "Build with debug option"
   option "with-default-parser=PARSER", "Specify the default fulltext parser like with-default-parser=TokenMecab (default: TokenBigram)"
 
@@ -134,6 +134,7 @@ class Mroonga < Formula
     end
 
     private
+
     def system(*args)
       if args == ["make", "install"] and @dry_install_tag
         throw @dry_install_tag

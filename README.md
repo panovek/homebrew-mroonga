@@ -2,30 +2,30 @@
 
 Type the following command to install Mroonga by Homebrew:
 
-With MySQL 8.0 (will fail):
+With MySQL 8.0:
 
-    % brew tap mroonga/mroonga
-    % brew install mroonga --with-homebrew-mysql --no-sandbox
+    % brew tap panovek/homebrew-mroonga https://github.com/panovek/homebrew-mroonga.git
+    % brew install mroonga --with-homebrew-mysql
 
 With MySQL 5.7:
 
-    % brew tap mroonga/mroonga
-    % brew install mroonga --with-homebrew-mysql57 --no-sandbox
+    % brew tap panovek/homebrew-mroonga https://github.com/panovek/homebrew-mroonga.git
+    % brew install mroonga --with-homebrew-mysql57
 
 With MySQL 5.6:
 
-    % brew tap mroonga/mroonga
-    % brew install mroonga --with-homebrew-mysql56 --no-sandbox
+    % brew tap panovek/homebrew-mroonga https://github.com/panovek/homebrew-mroonga.git
+    % brew install mroonga --with-homebrew-mysql56
 
 With MySQL 5.5:
 
-    % brew tap mroonga/mroonga
-    % brew install mroonga --with-homebrew-mysql55 --no-sandbox
+    % brew tap panovek/homebrew-mroonga https://github.com/panovek/homebrew-mroonga.git
+    % brew install mroonga --with-homebrew-mysql55
 
 With MariaDB:
 
-    % brew tap mroonga/mroonga
-    % brew install mroonga --with-homebrew-mariadb --no-sandbox
+    % brew tap panovek/homebrew-mroonga https://github.com/panovek/homebrew-mroonga.git
+    % brew install mroonga --with-homebrew-mariadb
 
 If you have an old formulae, please unlink to the old formulae version:
 
@@ -46,5 +46,5 @@ If you want to use this formula with MySQL built by yourself instead of MySQL in
     % scripts/mysql_install_db
     % bin/mysqld_safe &
     % cd -
-    % brew tap mroonga/mroonga
+    % brew tap panovek/homebrew-mroonga https://github.com/panovek/homebrew-mroonga.git
     % PATH="$HOME/local/mysql-5.5.24/bin:$PATH" brew install mroonga --with-mysql-source=$(pwd)
