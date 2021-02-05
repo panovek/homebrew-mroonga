@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+
 class Mroonga < Formula
   homepage "http://mroonga.org/"
-  url "http://packages.groonga.org/source/mroonga/mroonga-10.05.tar.gz"
-  sha256 "605c9ca9bf5af882026030404ae230e933a567c1defb5b9a3619744c37beeaae"
+  url "http://packages.groonga.org/source/mroonga/mroonga-10.11.tar.gz"
+  sha256 "00427a67f9d50179f6604fa6c583bdf4dabe22dd69852ea788d2a9402fbd9469"
 
   depends_on "pkg-config" => :build
 
@@ -12,11 +13,6 @@ class Mroonga < Formula
   option "with-homebrew-mysql55", "Use MySQL@5.5 installed by Homebrew."
   option "with-homebrew-mariadb", "Use MariaDB installed by Homebrew. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56, and with-homebrew-mysql55."
   option "with-mecab", "Use MeCab installed by Homebrew. You can use additional tokenizer - TokenMecab. Note that you need to build Groonga with MeCab"
-  option "with-mysql-source=", "MySQL source directory. You can't use this option with with-homebrew-mysql, with-homebrew-mysql57, with-homebrew-mysql56 and with-homebrew-mariadb"
-  option "with-mysql-build=", "MySQL build directory (default: guess from with-mysql-source)"
-  option "with-mysql-config=", "mysql_config path (default: guess from with-mysql-source)"
-  option "with-debug[=full]", "Build with debug option"
-  option "with-default-parser=PARSER", "Specify the default fulltext parser like with-default-parser=TokenMecab (default: TokenBigram)"
 
   if build.with?("mecab")
     depends_on "groonga" => "--with-mecab"
@@ -60,8 +56,7 @@ class Mroonga < Formula
     if mysql_formula_name
       build_formula(mysql_formula_name) do |formula|
         Dir.chdir(buildpath.to_s) do
-          install_mroonga(formula.buildpath.to_s,
-                          (formula.prefix + "bin" + "mysql_config").to_s)
+          install_mroonga(formula.buildpath.to_s, formula.original_prefix.to_s)
         end
       end
     else
@@ -78,6 +73,10 @@ class Mroonga < Formula
 
   def caveats
     <<~EOS
+      To complete the installation, you must run the following command:
+      #{data_path/"finish_install.sh"}
+      It creates symlinks of the libraries in the mysql plugin folder and installs them in mysql
+
       To confirm successfuly installed, run the following command
       and confirm that 'Mroonga' is in the list:
 
@@ -89,9 +88,6 @@ class Mroonga < Formula
          | Mroonga | ACTIVE | STORAGE ENGINE | ha_mroonga.so | GPL     |
          +---------+--------+----------------+---------------+---------+
          XX rows in set (0.00 sec)
-
-      To install Mroonga plugin manually, run the following command:
-         mysql -uroot < '#{install_sql_path}'
 
       To uninstall Mroonga plugin, run the following command:
          mysql -uroot < '#{uninstall_sql_path}'
@@ -118,6 +114,14 @@ class Mroonga < Formula
   end
 
   module DryInstallable
+    def name
+      if @name =~ /mysql|mariadb/
+        "mroonga/#{@name}"
+      else
+        @name
+      end
+    end
+
     def install(options={})
       if options[:dry_run]
         catch do |tag|
@@ -131,6 +135,10 @@ class Mroonga < Formula
       else
         super()
       end
+    end
+
+    def original_prefix
+      HOMEBREW_CELLAR/@name/pkg_version
     end
 
     private
@@ -154,46 +162,30 @@ class Mroonga < Formula
     end
   end
 
-  def build_configure_args(mysql_source_path, mysql_config_path)
+  def install_mroonga(mysql_source_path, mysql_original_path)
+    mysql_config_path = mysql_original_path + "/bin/mysql_config"
+    puts mysql_source_path
+    puts mysql_config_path
+
     configure_args = [
       "--prefix=#{prefix}",
       "--with-mysql-source=#{mysql_source_path}",
+      "--with-mysql-config=#{mysql_config_path}"
     ]
 
-    mysql_config = ARGV.value("with-mysql-config")
-    mysql_config ||= mysql_config_path
-    if mysql_config
-      configure_args << "--with-mysql-config=#{mysql_config}"
-    end
-
-    mysql_build_path = ARGV.value("with-mysql-build")
-    if mysql_build_path
-      configure_args << "--with-mysql-build=#{mysql_build_path}"
-    end
-
-    debug = ARGV.value("with-debug")
-    if debug
-      if debug == true
-        configure_args << "--with-debug"
-      else
-        configure_args << "--with-debug=#{debug}"
-      end
-    end
-
-    default_parser = ARGV.value("with-default-parser")
-    if default_parser
-      configure_args << "--with-default-parser=#{default_parser}"
-    end
-
-    configure_args
-  end
-
-  def install_mroonga(mysql_source_path, mysql_config_path)
-    configure_args = build_configure_args(mysql_source_path, mysql_config_path)
     system("./configure", *configure_args)
     system("make")
-    system("make", "install")
-    system("mysql -uroot < '#{install_sql_path}' || true")
+    system("make", "install", "plugindir=#{data_path}")
+
+    (data_path/"finish_install.sh").write <<~EOS
+      # Symlink libs
+      ln -s #{data_path/'ha_mroonga.0.so'} #{mysql_original_path + '/lib/plugin/ha_mroonga.so'}
+      ln -s #{data_path/'ha_mroonga.a'} #{mysql_original_path + '/lib/plugin/ha_mroonga.a'}
+      ln -s #{data_path/'ha_mroonga.la'} #{mysql_original_path + '/lib/plugin/ha_mroonga.la'}
+
+      # Install mysql mroonga plugin
+      mysql -uroot < '#{install_sql_path}' || true
+    EOS
   end
 
   def data_path
